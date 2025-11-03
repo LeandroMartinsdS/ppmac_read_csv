@@ -1,4 +1,26 @@
-/*For more information see notes.txt in the Documentation folder */
+/*
+ * =============================================================================
+ * File        : read_csv.c
+ * Author      : Leandro Martins dos Santos
+ * Created on  : 2024-07-04
+ * Last Update : 2025-11-04
+ * Version     : 1.0
+ * Description : CSV parsing and trajectory data preparation for Power PMAC.
+ *               This module reads CSV files containing motion profiles and
+ *               prepares them for execution via shared memory or buffer transfer.
+ *
+ * Dependencies: stdio.h, stdlib.h, string.h
+ *               gplib.h (Power PMAC library interface)
+ *               pp_proj.h (project-specific definitions and shared memory access)
+ *
+ * Compiler    : Power PMAC IDE (Visual Studio-based) or GCC (Linux)
+ * Target      : Power PMAC CPU (Linux/Xenomai RT kernel)
+ *
+ * License     : Apache-2.0
+ *
+ * =============================================================================
+ */
+
 #include <gplib.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -91,7 +113,7 @@ int write_positions(FILE *file, int bufferNum, int *line_count)
 	        token = strtok(NULL, ",");
         }
     }
-    
+
     while (fgets(line, sizeof(line), file) && (*line_count) < USHM_BUFF_SIZE) {
         char *field = strtok(line, ",");
 
@@ -122,11 +144,11 @@ int read_csv(char *filename, int profileType, int bufferNum)
     }
     if (profileType == 0) {
         write_PVT(file, bufferNum);
-    } 
+    }
     else if (profileType == 1) {
         write_positions(file, bufferNum,&line_count);
     }
-    
+
     SetPtrVar(BufferFill_A+bufferNum, line_count);
 //    printf("lines: %d\n",line_count);
 
